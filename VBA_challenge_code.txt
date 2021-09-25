@@ -1,0 +1,62 @@
+Sub vba_challenge()
+Dim ticker As String
+Dim y_open, y_close, volume, y_change, y_percent_change As Double
+Dim LastRow, i, j As Integer
+
+'set initial values
+LastRow = Cells(1, 1).End(xlDown).Row
+y_open = 0
+y_close = 0
+volume = 0
+j = 2
+
+'header formatting
+Cells(1, 9).Value = "Ticker"
+Cells(1, 10).Value = "Yearly Change"
+Cells(1, 11).Value = "Percent Change"
+Cells(1, 12).Value = "Total Volume"
+
+'getting the values for ticker, y_open, y_close, and volume each row
+    For i = 2 To LastRow
+        ticker = Cells(i, 1).Value
+        y_open = y_open + Cells(i, 3).Value
+        y_close = y_close + Cells(i, 6).Value
+        volume = volume + Cells(i, 7).Value
+        
+'going down the rows checking the tickers
+        If Cells(i, 1).Value <> Cells(i + 1, 1).Value Then
+
+'math to find y_change and y_percent_change
+
+            y_change = y_close - y_open
+
+'adding error handler in case of division of 0's
+            If y_open <> 0 Then
+                y_percent_change = (y_close - y_open) / y_open
+            Else
+                y_percent_change = 1
+            End If
+            
+'recording values under new header
+            Cells(j, 9).Value = ticker
+            Cells(j, 10).Value = y_change
+            Cells(j, 11).Value = FormatPercent(y_percent_change)
+            Cells(j, 12).Value = volume
+            
+'filling in colors for positive or negative y_change
+            If y_change < 0 Then
+                Cells(j, 10).Interior.Color = vbRed
+            Else
+                Cells(j, 10).Interior.Color = vbGreen
+            End If
+            
+'add to counter and reset variables
+            j = j + 1
+            y_open = 0
+            y_close = 0
+            volume = 0
+            
+            End If
+    Next i
+        
+End Sub
